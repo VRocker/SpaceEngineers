@@ -212,7 +212,8 @@ namespace Sandbox.Definitions
                 return;
 
             var definitionsBuilders = new List<Tuple<MyObjectBuilder_Definitions, string>>(30);
-            foreach (var file in MyFileSystem.GetFiles(context.ModPathData, "*.sbc", VRage.FileSystem.MySearchOption.AllDirectories))
+            //foreach (var file in MyFileSystem.GetFiles(context.ModPathData, "*.sbc", VRage.FileSystem.MySearchOption.AllDirectories))
+            ParallelTasks.Parallel.ForEach(MyFileSystem.GetFiles(context.ModPathData, "*.sbc", VRage.FileSystem.MySearchOption.AllDirectories), file =>
             {
                 context.CurrentFile = file;
 
@@ -221,7 +222,7 @@ namespace Sandbox.Definitions
 
                 if (builder == null)
                 {
-                   builder = Load<MyObjectBuilder_Definitions>(file);
+                    builder = Load<MyObjectBuilder_Definitions>(file);
                 }
 
                 if (builder == null)
@@ -239,7 +240,7 @@ namespace Sandbox.Definitions
                     }
                 }
                 definitionsBuilders.Add(new Tuple<MyObjectBuilder_Definitions, string>(builder, file));
-            }
+            });
 
             var phases = new Action<MyObjectBuilder_Definitions, MyModContext, DefinitionSet, bool>[]
             {
