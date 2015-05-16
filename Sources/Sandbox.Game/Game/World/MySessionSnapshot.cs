@@ -91,13 +91,15 @@ namespace Sandbox.Game.World
 
                     if (success)
                     {
-                        foreach (var file in Directory.GetFiles(saveAbsPath))
+                        // Shaves off 40ms
+                        ParallelTasks.Parallel.ForEach(Directory.GetFiles(saveAbsPath), file =>
+                        //foreach (var file in Directory.GetFiles(saveAbsPath))
                         {
                             var targetFile = Path.Combine(TargetDir, Path.GetFileName(file));
                             if (File.Exists(targetFile))
                                 File.Delete(targetFile);
                             File.Move(file, targetFile);
-                        }
+                        });
 
                         Directory.Delete(saveAbsPath);
                     }
